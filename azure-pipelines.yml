@@ -49,6 +49,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Main'
           backendServiceArm: 'dev'
           backendAzureRmResourceGroupName: 'DNS'
           backendAzureRmStorageAccountName: 'ranjithpersonal'
@@ -59,10 +60,12 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Main'
       - task: TerraformTaskV3@3
         displayName: 'apply'
         inputs:
           provider: 'azurerm'
           command: 'apply'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Main'
+          commandOptions: '-input=false -var "envi=${{parameters.envi}}" -var "resource_group_location=${{parameters.resource_group_location}}" -var prefix="${{parameters.prefix}}" -var "rdsh_count=${{parameters.rdsh_count}}" -var "local_admin_username=${{parameters.local_admin_username}}" -var "local_admin_password=${{parameters.local_admin_password}}" -var "offer=${{parameters.offer}}" -var "sku=${{parameters.sku}}" -var "vm_size=${{parameters.vm_size}}" -var "os_disk_type=${{parameters.os_disk_type}}" -var "domain_name=${{parameters.domain_name}}" -var "domain_user_upn=${{parameters.domain_user_upn}}" -var "domain_password=${{parameters.domain_password}}" -var "vnet_name=${{parameters.vnet_name}}" -var "subnet_name=${{parameters.subnet_name}}" -var "vnet_rg=${{parameters.vnet_rg}}"'
           environmentServiceNameAzureRM: 'dev'
-          commandOptions: -input=false -var "envi=${{parameters.envi}}" -var "resource_group_location=${{parameters.resource_group_location}}" -var prefix="${{parameters.prefix}}" -var "rdsh_count=${{parameters.rdsh_count}}" -var "local_admin_username=${{parameters.local_admin_username}}" -var "local_admin_password=${{parameters.local_admin_password}}" -var "offer=${{parameters.offer}}" -var "sku=${{parameters.sku}}" -var "vm_size=${{parameters.vm_size}}" -var "os_disk_type=${{parameters.os_disk_type}}" -var "domain_name=${{parameters.domain_name}}" -var "domain_user_upn=${{parameters.domain_user_upn}}" -var "domain_password=${{parameters.domain_password}}" -var "vnet_name=${{parameters.vnet_name}}" -var "subnet_name=${{parameters.subnet_name}}" -var "vnet_rg=${{parameters.vnet_rg}}"
