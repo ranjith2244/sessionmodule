@@ -1,0 +1,68 @@
+trigger:
+- none
+parameters:
+     - name : envi
+       type: string
+     - name : resource_group_location
+       type: string
+     - name : prefix
+       type: string
+     - name : rdsh_count
+       type: string
+     - name : local_admin_username
+       type: string
+     - name : local_admin_password
+       type: string
+     - name : offer
+       type: string
+     - name : sku
+       type: string
+     - name : vm_size
+       type: string
+     - name : os_disk_type
+       type: string
+     - name : domain_name
+       type: string
+     - name : domain_user_upn
+       type: string
+     - name : domain_password
+       type: string
+     - name : vnet_name
+       type: string
+     - name : subnet_name
+       type: string
+     - name : vnet_rg
+       type: string
+   
+stages:
+  - stage: validate
+    jobs:
+    - job: validate
+      continueOnError: false
+      steps:
+      - task: TerraformInstaller@0
+        displayName: 'install'
+        inputs:
+          terraformVersion: 'latest'
+      - task: TerraformTaskV3@3
+        displayName: 'init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'dev'
+          backendAzureRmResourceGroupName: 'DNS'
+          backendAzureRmStorageAccountName: 'ranjithpersonal'
+          backendAzureRmContainerName: 'devcontainer'
+          backendAzureRmKey: 'terraform.tfstate'
+      - task: TerraformTaskV3@3
+        displayName: validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+      - task: TerraformTaskV3@3
+        displayName: 'apply'
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          environmentServiceNameAzureRM: 'dev'
+          commandOptions: -input=false -var "envi=${{parameters.envi}}" -var "resource_group_location=${{parameters.resource_group_location}}" -var prefix="${{parameters.prefix}}" -var "rdsh_count=${{parameters.rdsh_count}}" -var "local_admin_username=${{parameters.local_admin_username}}" -var "local_admin_password=${{parameters.local_admin_password}}" -var "offer=${{parameters.offer}}" -var "sku=${{parameters.sku}}" -var "vm_size=${{parameters.vm_size}}" -var "os_disk_type=${{parameters.os_disk_type}}" -var "domain_name=${{parameters.domain_name}}" -var "domain_user_upn=${{parameters.domain_user_upn}}" -var "domain_password=${{parameters.domain_password}}" -var "vnet_name=${{parameters.vnet_name}}" -var "subnet_name=${{parameters.subnet_name}}" -var "vnet_rg=${{parameters.vnet_rg}}"
